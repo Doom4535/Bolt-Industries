@@ -33,12 +33,12 @@
 //TO  INSTALL  THIS FIRMWARE
 
 //This firmware must be installed through the Arduino IDE.
-//You must first install a third party board. The RP  2040 support in the Arduino IDE ddoes
-//not  include  support for the HID.h library that this sketch reqires. Fortunantly, there's a work around.
+//You must first install a third party board. The RP 2040 support in the Arduino IDE does
+//not include support for the HID.h library that this sketch reqires. Fortunately, there's a work around.
 //You will need to install a third party board written by Earle F. Philhower, III from Github.
 //You can read more about this third party board at: https://github.com/earlephilhower/arduino-pico
 
-//In the Arduino IDE: go to File > preferances, and paste the following URL  under the additional boards manager URL's:
+//In the Arduino IDE: go to File > preferances, and paste the following URL under the additional boards manager URLs:
 // https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json
 
 //Now, navigate over to the boards manager. Go to: Tools > Board > Board Manager. Search for "Pico"
@@ -52,7 +52,7 @@
 // When MACOSX is defined we send Command-c to copy instead of Control-c, etc.
 //#define MACOSX
 
-// assign the collums to pins.
+// assign the colums to pins.
 #define Col_0 0
 #define Col_1 1
 #define Col_2 2
@@ -85,14 +85,14 @@
 #define LED_2 28
 
 // The pin numbers of rows 2 through 6 do not increase linearly. This vector
-// lets us loop over those indice efficiently
+// lets us loop over those indices efficiently.
 const int rowIndices[ 5 ] = { Row_2, Row_3, Row_4, Row_5, Row_6 };
 
 // These are the times before a key is repeated. There is an initial long time then after that a shorter time so they repeat faster
 const int repeatDelayInitial = 300;
 const int repeatDelayRepeat = 40;
 
-//Adding a slight delay before sendding the key press helps with the modifier keys or key sequences. Without it, The
+//Adding a slight delay before sending the key press helps with the modifier keys or key sequences. Without it, The
 //keypresses tend to be missed.
 const int preDelay = 10;
 
@@ -131,20 +131,18 @@ static bool sBoolCapsLock = false;
 // This class is templated on the variables we pass in to allow us to declare types associated with the keys -
 // see the section below that defines these types with the "using" keyword
 // Usually the object is deleted when it goes out of scope (e.g., you have a closing '}' or you finish the current
-// iterationm of the for loop contianing this class instantiation.
+// iterationm of the for loop contianing this class instantiation.)
 template< bool* modifierBool, char key >
 class ScopedModifier {
   public:
-    ScopedModifier()
-    {
+    ScopedModifier() {
       if ( !*modifierBool ) {
         Keyboard.press(key); // press the Modifier key
         delay( preDelay );
       }
     }
 
-    ~ScopedModifier()
-    {
+    ~ScopedModifier() {
       if ( !*modifierBool ) {
         delay( preDelay );
         Keyboard.release(key); //release the Modifier key
@@ -172,12 +170,11 @@ bool sFnPressed[18];
 // Get the time delta in milliseconds between first and second, accounting for a possible
 // integer overflow of the millis() function (this happens every 50 days or so)
 // NOTE this will ALWAYS return a positive number
-unsigned long timeDelta( unsigned long first, unsigned long second )
-{
-  if ( second >=  first ) {
+unsigned long timeDelta(unsigned long first, unsigned long second) {
+  if (second >= first) {
     return second - first;
   } else {
-    return ( ULONG_MAX - first ) + second + 1;
+    return ULONG_MAX - first + second + 1;
   }
 }
 
@@ -185,7 +182,7 @@ unsigned long timeDelta( unsigned long first, unsigned long second )
 // Only accept these keys if the last time through they were not down.
 // Also check that they are held down for a minimum period of time.
 // Need to supply a pressState bool for tracking state
-bool nonRepeatingKeyPress( int column, bool& pressState ) {
+bool nonRepeatingKeyPress( int column, bool& pressState ) { 
   if ( digitalRead( column ) == LOW ) {
     if ( !pressState ) {
       delay (minimumKeypressDelay);
@@ -198,7 +195,7 @@ bool nonRepeatingKeyPress( int column, bool& pressState ) {
     pressState = false;
   }
   return false;
-};
+}
 
 // Helper function to check whether a key has been pressed for minimumKeypressDelay
 bool checkMinimumKeyPress( int column ) {
@@ -226,11 +223,10 @@ void modifierFunc( int column1, int column2, bool& state, char key ) {
     Keyboard.release(key);
     state = false;
   }
-};
+}
 
 // Helper function to write a unicode key code (Linux only)
-void writeUnicode( const char* unicodeString )
-{
+/*void writeUnicode( const char* unicodeString ) {
   {
     ScopedControl sc;
     ScopedShift ss;
@@ -241,14 +237,14 @@ void writeUnicode( const char* unicodeString )
   delay( preDelay );
   Keyboard.write (0xB0); //return
 }
+*/
 
-//void writeUnicode( const char* unicodeString ) // Windows only
-//{
-//    Keyboard.print ( unicodeString );
-//    delay( preDelay );
-//    ScopedAlt sa;
-//    Keyboard.write ('x');
-//}
+void writeUnicode( const char* unicodeString ) { // Windows only
+    Keyboard.print ( unicodeString );
+    delay( preDelay );
+    ScopedAlt sa;
+    Keyboard.write ('x');
+}
 
 // This function wraps the simple Keyboard.write( key ) function and properly handles
 // the caps lock key. The Keyboard library does not handle caps lock correctly, so we wrote our
@@ -257,8 +253,7 @@ void writeUnicode( const char* unicodeString )
 // We implement the caps lock by actually toggling the shift key, because sending an upper case
 // character in teh Keyboard library also will toggle shift. So we only ever
 // send lower case characters to write.
-void writeToKeyboardRespectCapLock( char key )
-{
+void writeToKeyboardRespectCapLock( char key ) {
   if ( !sBoolCapsLock || !isalpha( key ) ) {
     Keyboard.write( key );
   } else {
@@ -281,16 +276,13 @@ void writeToKeyboardRespectCapLock( char key )
 // RAII class to make a row active when the class object is created, then make the row inactive when the object is deleted.
 // Usually the object is deleted when it goes out of scope (e.g., you have a closing '}' or you finish the current
 // iterationm of the for loop contianing this class instantiation.
-class ScopedRowActive
-{
+class ScopedRowActive {
   public:
-    ScopedRowActive( int rowIndex) : mRowIndex( rowIndex )
-    {
+    ScopedRowActive( int rowIndex) : mRowIndex( rowIndex ) {
       digitalWrite( mRowIndex, LOW);
     }
 
-    ~ScopedRowActive()
-    {
+    ~ScopedRowActive() {
       digitalWrite( mRowIndex, HIGH);
     }
 
@@ -431,7 +423,7 @@ void loop() {
     // I've replaced F1, F2, F3, and F4 with copy, paste, undu and redo respectively.
 
     // F1 (cut)
-    if ( nonRepeatingKeyPress( Col_2, sFnPressed[ 2 ] ) ) {
+    /*if ( nonRepeatingKeyPress( Col_2, sFnPressed[ 2 ] ) ) {
       ScopedOsModifier sm;
       Keyboard.write( 'x' );
     }
@@ -459,7 +451,8 @@ void loop() {
       ScopedOsModifier sm;
       Keyboard.write( 'y' );
     }
-
+    */
+    
     //Print screen, Scrl and Pause don't have a hexidecimal value,
     //so they can be used for custom shortcuts. See the bottom of the sketch for some suggestions.
 
@@ -470,7 +463,7 @@ void loop() {
     //      Keyboard.write( 'p' );
     //    }
 
-    // Print Screen: Indtead of Print Screen this types a degree symbol
+    // Print Screen: Instead of Print Screen this types a degree symbol
     if ( checkMinimumKeyPress( Col_15 ) ) {
       writeUnicode( "00b0" );
     }
