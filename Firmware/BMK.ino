@@ -38,12 +38,12 @@
 
 //TO  INSTALL  THIS FIRMWARE
 //This firmware must be installed through the Arduino IDE.
-//You must first install a third party board. The RP  2040 support in the Arduino IDE does
-//not  include  support for the HID.h library that this sketch reqires. Fortunantly, there's a work around.
+//You must first install a third party board. The RP 2040 support in the Arduino IDE does
+//not include support for the HID.h library that this sketch reqires. Fortunately, there's a work around.
 //You will need to install a third party board written by Earle F. Philhower, III from Github.
 //You can read more about this third party board at: https://github.com/earlephilhower/arduino-pico
 
-//In the Arduino IDE: go to File > preferances, and paste the following URL  under the additional boards manager URL's:
+//In the Arduino IDE: go to File > preferances, and paste the following URL under the additional boards manager URLs:
 // https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json
 
 //Now, navigate over to the boards manager. Go to: Tools > Board > Board Manager. Search for "Pico"
@@ -61,7 +61,7 @@
 //#define MACOSX
 #define WIN32
 
-// assign the collums to pins.
+// assign the columns to pins.
 #define Col_0 0
 #define Col_1 1
 #define Col_2 2
@@ -94,14 +94,14 @@
 #define LED_2 28
 
 // The pin numbers of rows 2 through 6 do not increase linearly. This vector
-// lets us loop over those indice efficiently
+// lets us loop over those indices efficiently.
 const int rowIndices[ 5 ] = { Row_2, Row_3, Row_4, Row_5, Row_6 };
 
 // These are the times before a key is repeated. There is an initial long time then after that a shorter time so they repeat faster
 const int repeatDelayInitial = 300;
 const int repeatDelayRepeat = 30;
 
-//Adding a slight delay before sendding the key press helps with the modifier keys or key sequences. Without it, The
+//Adding a slight delay before sending the key press helps with the modifier keys or key sequences. Without it, The
 //keypresses tend to be missed.
 const int preDelay = 10;
 
@@ -182,19 +182,17 @@ bool columnPressed( int column )
 // This class is templated on the variables we pass in to allow us to declare types associated with the keys -
 // see the section below that defines these types with the "using" keyword
 // Usually the object is deleted when it goes out of scope (e.g., you have a closing '}' or you finish the current
-// iterationm of the for loop contianing this class instantiation.
+// iteration of the for loop contianing this class instantiation.)
 template< bool* modifierBool, char key >
 class ScopedModifier {
   public:
-    ScopedModifier()
-    {
+    ScopedModifier() {
       if ( !*modifierBool ) {
         keyboardPress(key); // press the Modifier key
       }
     }
 
-    ~ScopedModifier()
-    {
+    ~ScopedModifier() {
       if ( !*modifierBool ) {
         keyboardRelease(key); //release the Modifier key
       }
@@ -217,12 +215,11 @@ using ScopedOsModifier = ScopedControl;
 // Get the time delta in milliseconds between first and second, accounting for a possible
 // integer overflow of the millis() function (this happens every 50 days or so)
 // NOTE this will ALWAYS return a positive number
-unsigned long timeDelta( unsigned long first, unsigned long second )
-{
-  if ( second >=  first ) {
+unsigned long timeDelta(unsigned long first, unsigned long second) {
+  if (second >= first) {
     return second - first;
   } else {
-    return ( ULONG_MAX - first ) + second + 1;
+    return ULONG_MAX - first + second + 1;
   }
 }
 
@@ -230,7 +227,7 @@ unsigned long timeDelta( unsigned long first, unsigned long second )
 // Only accept these keys if the last time through they were not down.
 // Also check that they are held down for a minimum period of time.
 // Need to supply a pressState bool for tracking state
-bool nonRepeatingKeyPress( int column, bool& pressState ) {
+bool nonRepeatingKeyPress( int column, bool& pressState ) { 
   if ( digitalRead( column ) == LOW ) {
     if ( !pressState ) {
       delay (minimumKeypressDelay);
@@ -243,7 +240,7 @@ bool nonRepeatingKeyPress( int column, bool& pressState ) {
     pressState = false;
   }
   return false;
-};
+}
 
 // Helper function to check whether a key has been pressed for minimumKeypressDelay
 bool checkMinimumKeyPress( int column ) {
@@ -271,7 +268,7 @@ void modifierFunc( int column1, int column2, bool& state, char key ) {
     keyboardRelease(key);
     state = false;
   }
-};
+}
 
 
 // Helper function to write a unicode key code (Linux, Chrome, Android OS only.) This is not application spacific and works just about anywhere 
@@ -322,16 +319,13 @@ void pressKeyboardRespectCapLock( char key )
 // RAII class to make a row active when the class object is created, then make the row inactive when the object is deleted.
 // Usually the object is deleted when it goes out of scope (e.g., you have a closing '}' or you finish the current
 // iterationm of the for loop contianing this class instantiation.
-class ScopedRowActive
-{
+class ScopedRowActive {
   public:
-    ScopedRowActive( int rowIndex) : mRowIndex( rowIndex )
-    {
+    ScopedRowActive( int rowIndex) : mRowIndex( rowIndex ) {
       digitalWrite( mRowIndex, LOW);
     }
 
-    ~ScopedRowActive()
-    {
+    ~ScopedRowActive() {
       digitalWrite( mRowIndex, HIGH);
     }
 
@@ -506,7 +500,7 @@ void loop() {
 
 
     // F1 (cut)
-    if ( nonRepeatingKeyPress( Col_2, sFnPressed[ 2 ] ) ) {
+    /*if ( nonRepeatingKeyPress( Col_2, sFnPressed[ 2 ] ) ) {
       ScopedOsModifier sm;
       keyboardWrite( 'x' );
     }
@@ -547,31 +541,28 @@ void loop() {
       keyboardWrite( 's' );
     }
 
-        // F8 (Type my email address)
+    // F8 (Type my email address)
     if ( nonRepeatingKeyPress( Col_10, sFnPressed[ 10 ] ) ) {
        keyboardPrint( "email@address.com" );
-
     }
 
-          
-    //F9
+    // F9
     if ( nonRepeatingKeyPress( Col_11, sFnPressed[ 11 ] ) ) {
-
       //do something here.
-
+      writeUnicode( "00b0" ); // Writes out a degree symbol
     }
     
-    //F10 Type my street address
+    // F10 Type my street address
     if ( nonRepeatingKeyPress( Col_12, sFnPressed[ 12 ] ) ) {
       keyboardPrint( "1234 Anywhere St" );
     }
 
-     //F11 Type my street address
+    // F11 Type a Theta symbol
     if ( nonRepeatingKeyPress( Col_13, sFnPressed[ 13 ] ) ) {
         writeUnicode( "03f4" ); // types a Theta symbol
     }
 
-     //F12 Type a Pi symbol
+    // F12 Type a Pi symbol
     if ( nonRepeatingKeyPress( Col_14, sFnPressed[ 14 ] ) ) {
        writeUnicode( "03c0" ); // types a Pi symbol
     }
@@ -626,11 +617,6 @@ void loop() {
 
       //Instead of Print Screen this types a degree symbol
       writeUnicode( "00b0" );
-
-
-
     }
-
   } // after this brace row 0 is inactive
-
 }
