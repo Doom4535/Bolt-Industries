@@ -38,12 +38,12 @@
 
 //TO  INSTALL  THIS FIRMWARE
 //This firmware must be installed through the Arduino IDE.
-//You must first install a third party board. The RP 2040 support in the Arduino IDE does
-//not include support for the HID.h library that this sketch reqires. Fortunately, there's a work around.
+//You must first install a third party board. The RP  2040 support in the Arduino IDE does
+//not  include  support for the HID.h library that this sketch reqires. Fortunantly, there's a work around.
 //You will need to install a third party board written by Earle F. Philhower, III from Github.
 //You can read more about this third party board at: https://github.com/earlephilhower/arduino-pico
 
-//In the Arduino IDE: go to File > preferances, and paste the following URL under the additional boards manager URLs:
+//In the Arduino IDE: go to File > preferances, and paste the following URL  under the additional boards manager URL's:
 // https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json
 
 //Now, navigate over to the boards manager. Go to: Tools > Board > Board Manager. Search for "Pico"
@@ -61,7 +61,7 @@
 //#define MACOSX
 #define WIN32
 
-// assign the columns to pins.
+// assign the collums to pins.
 #define Col_0 0
 #define Col_1 1
 #define Col_2 2
@@ -94,14 +94,14 @@
 #define LED_2 28
 
 // The pin numbers of rows 2 through 6 do not increase linearly. This vector
-// lets us loop over those indices efficiently.
+// lets us loop over those indice efficiently
 const int rowIndices[ 5 ] = { Row_2, Row_3, Row_4, Row_5, Row_6 };
 
 // These are the times before a key is repeated. There is an initial long time then after that a shorter time so they repeat faster
 const int repeatDelayInitial = 300;
 const int repeatDelayRepeat = 30;
 
-//Adding a slight delay before sending the key press helps with the modifier keys or key sequences. Without it, The
+//Adding a slight delay before sendding the key press helps with the modifier keys or key sequences. Without it, The
 //keypresses tend to be missed.
 const int preDelay = 10;
 
@@ -125,9 +125,9 @@ bool sKeyPressed[5][18];
 // This is the mapping from column to key for the top function keys (Rw_0). If you want to override a key, just enter the new key here.
 // If you want to write your own special handling, enter a 0x00 here to skip the key loop then write your special handling elsewhere.
 // If you want regular Function keys instead of shortcuts, you can comment out line 126 and un comment line 127.
-//                                   0     1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17
-const char sKeysForRowsFn[18] = { 0xB1, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
-//const char sKeysForRowsFn[18] = { 0xB1, 0x00, 0xC2, 0xC3, 0xC4, 0xC5, 0xC6, 0xC7, 0xC8, 0xC9, 0xCA, 0xCB, 0xCC, 0xCD,0x00, 0x00, 0x00, 0x00 };
+
+//                                  0     1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17
+const char sKeysForRowsFn[18] = { 0xB1, 0x00, 0xC2, 0xC3, 0xC4, 0xC5, 0x00, 0xC6, 0xC7, 0xC8, 0xC9, 0xCA, 0xCB, 0xCC, 0xCD, 0xCE, 0xCF, 0xD0 };
 
 // Here we track whether the function key was down or up on the last loop. We use this
 // to prevent key repeat of function keys
@@ -182,17 +182,19 @@ bool columnPressed( int column )
 // This class is templated on the variables we pass in to allow us to declare types associated with the keys -
 // see the section below that defines these types with the "using" keyword
 // Usually the object is deleted when it goes out of scope (e.g., you have a closing '}' or you finish the current
-// iteration of the for loop contianing this class instantiation.)
+// iterationm of the for loop contianing this class instantiation.
 template< bool* modifierBool, char key >
 class ScopedModifier {
   public:
-    ScopedModifier() {
+    ScopedModifier()
+    {
       if ( !*modifierBool ) {
         keyboardPress(key); // press the Modifier key
       }
     }
 
-    ~ScopedModifier() {
+    ~ScopedModifier()
+    {
       if ( !*modifierBool ) {
         keyboardRelease(key); //release the Modifier key
       }
@@ -215,11 +217,12 @@ using ScopedOsModifier = ScopedControl;
 // Get the time delta in milliseconds between first and second, accounting for a possible
 // integer overflow of the millis() function (this happens every 50 days or so)
 // NOTE this will ALWAYS return a positive number
-unsigned long timeDelta(unsigned long first, unsigned long second) {
-  if (second >= first) {
+unsigned long timeDelta( unsigned long first, unsigned long second )
+{
+  if ( second >=  first ) {
     return second - first;
   } else {
-    return ULONG_MAX - first + second + 1;
+    return ( ULONG_MAX - first ) + second + 1;
   }
 }
 
@@ -227,7 +230,7 @@ unsigned long timeDelta(unsigned long first, unsigned long second) {
 // Only accept these keys if the last time through they were not down.
 // Also check that they are held down for a minimum period of time.
 // Need to supply a pressState bool for tracking state
-bool nonRepeatingKeyPress( int column, bool& pressState ) { 
+bool nonRepeatingKeyPress( int column, bool& pressState ) {
   if ( digitalRead( column ) == LOW ) {
     if ( !pressState ) {
       delay (minimumKeypressDelay);
@@ -240,7 +243,7 @@ bool nonRepeatingKeyPress( int column, bool& pressState ) {
     pressState = false;
   }
   return false;
-}
+};
 
 // Helper function to check whether a key has been pressed for minimumKeypressDelay
 bool checkMinimumKeyPress( int column ) {
@@ -268,7 +271,7 @@ void modifierFunc( int column1, int column2, bool& state, char key ) {
     keyboardRelease(key);
     state = false;
   }
-}
+};
 
 
 // Helper function to write a unicode key code (Linux, Chrome, Android OS only.) This is not application spacific and works just about anywhere 
@@ -319,13 +322,16 @@ void pressKeyboardRespectCapLock( char key )
 // RAII class to make a row active when the class object is created, then make the row inactive when the object is deleted.
 // Usually the object is deleted when it goes out of scope (e.g., you have a closing '}' or you finish the current
 // iterationm of the for loop contianing this class instantiation.
-class ScopedRowActive {
+class ScopedRowActive
+{
   public:
-    ScopedRowActive( int rowIndex) : mRowIndex( rowIndex ) {
+    ScopedRowActive( int rowIndex) : mRowIndex( rowIndex )
+    {
       digitalWrite( mRowIndex, LOW);
     }
 
-    ~ScopedRowActive() {
+    ~ScopedRowActive()
+    {
       digitalWrite( mRowIndex, HIGH);
     }
 
@@ -500,77 +506,80 @@ void loop() {
 
 
     // F1 (cut)
-    /*if ( nonRepeatingKeyPress( Col_2, sFnPressed[ 2 ] ) ) {
-      ScopedOsModifier sm;
-      keyboardWrite( 'x' );
-    }
+//    if ( nonRepeatingKeyPress( Col_2, sFnPressed[ 2 ] ) ) {
+//      ScopedOsModifier sm;
+//      keyboardWrite( 'x' );
+//   }
 
     //F2 (Copy) 
-    if ( nonRepeatingKeyPress( Col_3, sFnPressed[ 3 ] ) ) {
-      ScopedOsModifier sm;
-      keyboardWrite( 'c' );
-    }
+//    if ( nonRepeatingKeyPress( Col_3, sFnPressed[ 3 ] ) ) {
+//      ScopedOsModifier sm;
+//      keyboardWrite( 'c' );
+//   }
 
     // F3 (Paste)
-    if ( nonRepeatingKeyPress( Col_4, sFnPressed[ 4 ] ) ) {
-      ScopedOsModifier sm;
-      keyboardWrite( 'v' );
-    }
+//   if ( nonRepeatingKeyPress( Col_4, sFnPressed[ 4 ] ) ) {
+//      ScopedOsModifier sm;
+//      keyboardWrite( 'v' );
+//   }
 
     //F4 (Undo)
-    if ( nonRepeatingKeyPress( Col_5, sFnPressed[ 5 ] ) ) {
-      ScopedOsModifier sm;
-      keyboardWrite( 'z' );
-    }
+//    if ( nonRepeatingKeyPress( Col_5, sFnPressed[ 5 ] ) ) {
+//      ScopedOsModifier sm;
+//      keyboardWrite( 'z' );
+//    }
 
     // F5 (Redo)
-    if ( nonRepeatingKeyPress( Col_7, sFnPressed[ 7 ] ) ) {
-      ScopedOsModifier sm;
-      keyboardWrite( 'y' );
-    }
+//    if ( nonRepeatingKeyPress( Col_7, sFnPressed[ 7 ] ) ) {
+//      ScopedOsModifier sm;
+//      keyboardWrite( 'y' );
+//    }
 
     // F6 (Search)
-    if ( nonRepeatingKeyPress( Col_8, sFnPressed[ 8 ] ) ) {
-      ScopedOsModifier sm;
-      keyboardWrite( 'f' );
-    }
+//    if ( nonRepeatingKeyPress( Col_8, sFnPressed[ 8 ] ) ) {
+//      ScopedOsModifier sm;
+//      keyboardWrite( 'f' );
+//    }
     
     // F7 (Save)
-    if ( nonRepeatingKeyPress( Col_9, sFnPressed[ 9 ] ) ) {
-      ScopedOsModifier sm;
-      keyboardWrite( 's' );
-    }
+//    if ( nonRepeatingKeyPress( Col_9, sFnPressed[ 9 ] ) ) {
+//      ScopedOsModifier sm;
+//      keyboardWrite( 's' );
+//    }
 
-    // F8 (Type my email address)
-    if ( nonRepeatingKeyPress( Col_10, sFnPressed[ 10 ] ) ) {
-       keyboardPrint( "email@address.com" );
-    }
+        // F8 (Type my email address)
+//    if ( nonRepeatingKeyPress( Col_10, sFnPressed[ 10 ] ) ) {
+//       keyboardPrint( "email@address.com" );
 
-    // F9
-    if ( nonRepeatingKeyPress( Col_11, sFnPressed[ 11 ] ) ) {
+//    }
+
+          
+    //F9
+ //   if ( nonRepeatingKeyPress( Col_11, sFnPressed[ 11 ] ) ) {
+
       //do something here.
-      writeUnicode( "00b0" ); // Writes out a degree symbol
-    }
+
+//    }
     
-    // F10 Type my street address
-    if ( nonRepeatingKeyPress( Col_12, sFnPressed[ 12 ] ) ) {
-      keyboardPrint( "1234 Anywhere St" );
-    }
+    //F10 Type my street address
+//    if ( nonRepeatingKeyPress( Col_12, sFnPressed[ 12 ] ) ) {
+   //   keyboardPrint( "1234 Anywhere St" );
+//    }
 
-    // F11 Type a Theta symbol
-    if ( nonRepeatingKeyPress( Col_13, sFnPressed[ 13 ] ) ) {
-        writeUnicode( "03f4" ); // types a Theta symbol
-    }
+     //F11 Type my street address
+//    if ( nonRepeatingKeyPress( Col_13, sFnPressed[ 13 ] ) ) {
+     //   writeUnicode( "03f4" ); // types a Theta symbol
+//    }
 
-    // F12 Type a Pi symbol
-    if ( nonRepeatingKeyPress( Col_14, sFnPressed[ 14 ] ) ) {
-       writeUnicode( "03c0" ); // types a Pi symbol
-    }
+     //F12 Type a Pi symbol
+//    if ( nonRepeatingKeyPress( Col_14, sFnPressed[ 14 ] ) ) {
+    //   writeUnicode( "03c0" ); // types a Pi symbol
+//    }
 
     // Print Screen
-   if ( checkMinimumKeyPress( Col_15 ) ) {
-       //Instead of Scroll lock, this types an ohm symbol.
-      writeUnicode( "03a9" );
+ //  if ( checkMinimumKeyPress( Col_15 ) ) {
+ //      //Instead of Scroll lock, this types an ohm symbol.
+ //     writeUnicode( "03a9" );
 
       
 //#ifdef MACOSX
@@ -587,10 +596,10 @@ void loop() {
 //#endif
 
 
-    }
+ //   }
 
     //Scrl:  
-    if (checkMinimumKeyPress( Col_16 ) ) {
+//    if (checkMinimumKeyPress( Col_16 ) ) {
 //#ifdef MACOSX
 //      // Mac partial screen capture
 //      ScopedGui sg;
@@ -599,11 +608,11 @@ void loop() {
 //#endif
 
       //Instead of pause, this types a micro symbol.
-      writeUnicode( "03bc" );
-    }
+  //    writeUnicode( "03bc" );
+ //   }
 
     //Pause: 
-    if ( checkMinimumKeyPress( Col_17 ) ) {
+//    if ( checkMinimumKeyPress( Col_17 ) ) {
 //#ifdef MACOSX
 //      // Mac screen lock
 //      ScopedGui sg;
@@ -616,7 +625,12 @@ void loop() {
 //#endif
 
       //Instead of Print Screen this types a degree symbol
-      writeUnicode( "00b0" );
-    }
+  //    writeUnicode( "00b0" );
+
+
+
+//    }
+
   } // after this brace row 0 is inactive
+
 }

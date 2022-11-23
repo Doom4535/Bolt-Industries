@@ -5,8 +5,8 @@ Welcome to the Bolt Industries Github Repo.
 
 Here you will find firmware for the Pico 87 Mechanical Keyboard, as well as the open source hardware. 
 
-If you would like to get your hands on a Pico 87 Mechanical keyboard, you can find the project on Kickstarter. 
-https://www.kickstarter.com/projects/1639195067/the-bolt-industries-pico-87-mechanical-keyboard
+If you would like to get your hands on a Pico 87 Mechanical keyboard, you can find the kit in the Bolt Industries store: 
+www.boltind.com
 
 
 Hardware:
@@ -30,6 +30,10 @@ Installing KMK is a little more involved.
 5. Your keyboard should immidatly start working!
 
 Note that this is the first time Ive ever done anything with Python. The main.py file works like a perfectly functioning keyboard, but I'm sure it can be done better. If you feel inclined to make any improvements, please don't hesitate to submit a pull request or email me your code and I'll commit it to the main repo. 
+
+Matrix tester: 
+This is a neat Python program to test the key matrix after you get everything soldered, as well as a nice set of assembly instructions. It was written by 
+Pierre Constantineau, one of the project's backers. The tester program just lights up the LED between F1 and F2 when a key is pressed. It's a really simple way to test your soldering. You can find it on Pierre's Repo here: https://github.com/jpconstantineau/pico-87-keyboard
 
 
 ![image](https://user-images.githubusercontent.com/58665565/154625246-d543506a-e4ff-4449-9799-5506421c1dbc.png)
